@@ -54,7 +54,7 @@ describe('vault', () => {
       expect(back).toEqual(v);
     });
 
-    it('writes file with mode 0600', () => {
+    it.skipIf(process.platform === 'win32')('writes file with mode 0600', () => {
       const v = createVault();
       writeVault(vaultPath, v);
       const stat = fs.statSync(vaultPath);
