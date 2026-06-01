@@ -7,7 +7,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/envault.svg)](https://www.npmjs.com/package/envault)
 [![codecov](https://codecov.io/gh/wardsvelds2l/envault/branch/main/graph/badge.svg)](https://codecov.io/gh/wardsvelds2l/envault)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Node >=18](https://img.shields.io/badge/node-%3E%3D18.18-brightgreen.svg)](./package.json)
+[![Node >=20](https://img.shields.io/badge/node-%3E%3D20.0-brightgreen.svg)](./package.json)
 [![no telemetry](https://img.shields.io/badge/telemetry-none-blue.svg)](./SECURITY.md)
 
 ---
@@ -163,7 +163,7 @@ npx envault@^0.2.0 init
 
 Or grab the prebuilt single-file bundle from the [releases page](https://github.com/wardsvelds2l/envault/releases) — `dist/envault.js` is one self-contained file, no `node_modules` needed at runtime.
 
-Requires Node.js 18.18 or newer (we test 18, 20 and 22 in CI on Ubuntu, macOS, and Windows).
+Requires Node.js 20.0 or newer (we test 20 and 22 in CI on Ubuntu, macOS, and Windows).
 
 ## Quick start
 

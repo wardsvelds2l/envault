@@ -67,7 +67,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "engines": {
-    "node": ">=18.18.0",
+    "node": ">=20.0.0",
     "npm": ">=9",
     "pnpm": ">=8",
     "yarn": ">=1.22"
