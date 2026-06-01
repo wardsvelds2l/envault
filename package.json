@@ -24,7 +24,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"__tests__/**/*.ts\" \"scripts/**/*.ts\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "all": "npm run typecheck && npm run lint && npm run test && npm run build && npm run bundle",
-    "bench": "esbuild --bundle --platform=node --format=esm --target=node20 scripts/bench.ts | node",
+    "bench": "esbuild --bundle --platform=node --format=esm --target=node22 scripts/bench.ts | node",
     "clean": "rm -rf dist coverage",
     "prebuild": "npm run clean",
     "prepublishOnly": "npm run all"
