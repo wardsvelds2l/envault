@@ -1,0 +1,30 @@
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: node
+          # Default config (.release-please-manifest.json + .release-please-config.json)
+          # is picked up automatically. On push to main, release-please
+          # will open / update a release PR. Merging that PR creates a
+          # GitHub release with an auto-generated changelog and bumps
+          # the version in package.json.
+          # See https://github.com/googleapis/release-please for full docs.
+      - name: Print release output
+        if: steps.release.outputs.release_created
+        run: |
+          echo "Released ${{ steps.release.outputs.tag_name }}"
+          echo "Upload URL: ${{ steps.release.outputs.upload_url }}"

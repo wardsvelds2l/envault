@@ -1,0 +1,14 @@
+# Normalise line endings and force LF for text files.
+* text=auto eol=lf
+
+# Lock down generated artefacts: hide noisy diffs in dist/ and tell
+# GitHub they are machine-generated so they don't pollute language stats.
+dist/* -diff linguist-generated
+
+# Shell scripts and bin wrappers must always be LF.
+*.sh text eol=lf
+bin/* text eol=lf
+
+# Markdown and YAML in .github/ should never carry a BOM.
+*.md text eol=lf
+.github/**/*.yml text eol=lf

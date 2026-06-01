@@ -1,0 +1,54 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Europe/London
+    # Group all minor/patch updates for direct dependencies into a single
+    # PR so we are not flooded with one-PR-per-package noise.
+    groups:
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+      dev-minor-and-patch:
+        applies-to: version-updates
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+    # Major bumps for direct deps require a deliberate decision; we
+    # leave those to humans and to release-please.
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - major
+    labels:
+      - dependencies
+      - automerge
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore(deps)
+      prefix-development: chore(dev-deps)
+      include: scope
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Europe/London
+    groups:
+      actions:
+        applies-to: version-updates
+    labels:
+      - dependencies
+      - ci
+    commit-message:
+      prefix: ci(actions)
+      include: scope

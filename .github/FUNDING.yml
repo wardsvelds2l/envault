@@ -1,0 +1,12 @@
+# These are the funding platforms supported by GitHub Sponsors and the
+# Open Source Collective. To enable one or more of them, uncomment the
+# relevant entry and replace the placeholder values with your real
+# links. The empty array below is valid — it just means "no funding
+# links shown on the repo page" until you opt in.
+#
+# github: [your-username]
+# open_collective: your-username
+# patreon: your-username
+# tidelift: npm/envault
+# custom: ['https://example.com/donate']
+[]

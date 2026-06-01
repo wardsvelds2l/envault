@@ -1,0 +1,61 @@
+# GitLab CI: run tests with secrets from an envault vault
+
+Same pattern as `github-actions.yml`, but for GitLab CI/CD. The master
+password is a **masked** CI/CD variable (Settings → CI/CD → Variables
+→ Add variable → "Mask variable" and "Protect variable" enabled), so
+GitLab redacts it from job logs automatically.
+
+## Setup
+
+1. Commit `.env.vault` to your repository.
+2. Add a masked, protected CI/CD variable named `ENVVAULT_PASSWORD`
+   containing the master password.
+3. Save this file as `.gitlab-ci.yml`.
+
+```yaml
+image: node:20
+
+# Cache npm + envault install between jobs.
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+stages:
+  - test
+
+test:
+  stage: test
+  image: node:20
+  parallel:
+    matrix:
+      - NODE_VERSION: ["18", "20", "22"]
+  image: node:${NODE_VERSION}
+  before_script:
+    - node --version
+    - npm ci
+    # Install envault without polluting package.json; we use it as a
+    # dev tool, not a runtime dep of the project under test.
+    - npm install --no-save envault@^0.2.0
+  script:
+    - npx envault --version
+    - npx envault inspect
+    # Decrypt the vault and run the test suite. Plaintext values are
+    # only in the child process's environment, never in a file.
+    - npx envault run -- npm test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+```
+
+## Notes
+
+- `npm install --no-save envault@^0.2.0` keeps the lockfile clean of
+  the dev tool. If you use envault heavily in CI, add it to
+  `devDependencies` and rely on `npm ci`.
+- If you build a Docker image that needs the secrets at runtime
+  (e.g. for a deploy job), use the `envault run --` pattern in the
+  `CMD` of the Dockerfile rather than baking a plaintext `.env`
+  into a layer.
+- See [`threat-model.md`](./threat-model.md) for what this setup
+  protects against, and what it does not.

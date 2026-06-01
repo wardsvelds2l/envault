@@ -1,9 +1,18 @@
 node_modules/
 dist/
 coverage/
+scripts/dist/
 *.log
+*.tsbuildinfo
 .DS_Store
 .env
 .env.local
 .env.*.local
 .vitest-cache/
+.vscode/
+.idea/
+# Defensive: stray compiled JS inside src/ would shadow the TypeScript
+# source for vitest and silently break tests. The build emits to dist/,
+# never src/, but if a contributor changes that, the .gitignore catches it.
+src/*.js
+src/*.js.map
