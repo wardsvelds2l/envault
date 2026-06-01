@@ -19,6 +19,9 @@ describe('add command', () => {
     vaultPath = path.join(tmpDir, '.env.vault');
     originalEnvPassword = process.env['ENVVAULT_PASSWORD'];
     process.env['ENVVAULT_PASSWORD'] = TEST_PASSWORD;
+    // Pre-create vault with fast test KDF so addCommand doesn't use
+    // production-grade Argon2id params (which timeout in CI coverage runs).
+    writeVault(vaultPath, createVault(TEST_KDF));
   });
 
   afterEach(() => {
@@ -36,7 +39,9 @@ describe('add command', () => {
     passwordPrompt: false,
   });
 
-  it('creates a vault if none exists and adds a variable', async () => {
+  it('creates a vault if none exists and adds a variable', { timeout: 60000 }, async () => {
+    // Remove pre-created test vault so addCommand exercises the "create" path.
+    fs.rmSync(vaultPath, { force: true });
     await addCommand('FOO=bar', {}, opts());
     const v = readVault(vaultPath);
     expect(v.version).toBe(1);
