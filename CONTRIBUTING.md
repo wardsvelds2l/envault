@@ -19,7 +19,7 @@ specific. Disagree on the substance, not on the person.
 
 ## Development setup
 
-You need **Node.js 18.18 or newer** (we test 18, 20 and 22 in CI),
+You need **Node.js 20.0 or newer** (we test 20 and 22 in CI),
 `npm` 9+, and a POSIX-y shell. On Windows the bin wrapper is
 intentionally a `.cmd`-less shim that re-execs `node
 dist/envault.js`; we still test on `windows-latest` in CI.

@@ -13,7 +13,7 @@ GitLab redacts it from job logs automatically.
 3. Save this file as `.gitlab-ci.yml`.
 
 ```yaml
-image: node:20
+image: node:22
 
 # Cache npm + envault install between jobs.
 cache:
@@ -26,10 +26,10 @@ stages:
 
 test:
   stage: test
-  image: node:20
+  image: node:22
   parallel:
     matrix:
-      - NODE_VERSION: ["18", "20", "22"]
+      - NODE_VERSION: ["20", "22"]
   image: node:${NODE_VERSION}
   before_script:
     - node --version
