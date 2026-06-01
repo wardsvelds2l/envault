@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Local dev wrapper. After `npm run build && npm run bundle`, this re-execs
+# the bundled CLI. In production, npm installs dist/envault.js directly via
+# the `bin` field in package.json.
+exec node "$(dirname "$0")/../dist/envault.js" "$@"
