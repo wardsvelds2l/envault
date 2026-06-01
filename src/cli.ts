@@ -16,7 +16,7 @@ const program = new Command();
 program
   .name('envault')
   .description('Encrypt .env files with XChaCha20-Poly1305 + Argon2id so they can be safely committed to git')
-  .version('0.1.0')
+  .version('0.2.0')
   .option('--vault <path>', 'Path to vault file', '.env.vault')
   .option('--password-stdin', 'Read password from stdin')
   .option('--password-file <path>', 'Read password from file')

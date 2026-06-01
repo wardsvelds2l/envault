@@ -1,0 +1,91 @@
+# GitHub Actions: run tests with secrets from an envault vault
+
+This workflow checks out your repo, installs envault once, decrypts
+`.env.vault` with the master password pulled from a repo secret, and
+runs the test suite. There is no plaintext `.env` file in the
+workspace and no master password in any log.
+
+## Setup
+
+1. **Commit `.env.vault`** to your repository (it is the encrypted
+   artefact; safe to commit).
+2. **Add a repository secret** named `ENVVAULT_PASSWORD` containing
+   the master password (Settings → Secrets and variables → Actions
+   → New repository secret).
+3. **Drop this file** into `.github/workflows/test.yml`.
+
+```yaml
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Install envault (one small dependency; or `npm i -g` it).
+      - name: Install envault
+        run: npm install --no-save envault@^0.2.0
+
+      # Decrypt the vault and exec the test command with all secrets
+      # in the process environment. `envault run` never writes the
+      # plaintext .env to disk in the runner.
+      - name: Run tests with decrypted vault
+        env:
+          ENVVAULT_PASSWORD: ${{ secrets.ENVVAULT_PASSWORD }}
+        run: |
+          npx envault --version
+          npx envault inspect
+          npx envault run -- npm test
+```
+
+## Why this is safe to copy
+
+- The master password is referenced only via `${{ secrets.ENVVAULT_PASSWORD }}`
+  and exposed to a single step's `env`. GitHub Actions automatically
+  masks it from logs.
+- The plaintext `.env` is never written to disk; `envault run --`
+  injects the variables into the child process's environment only.
+- The vault file (`.env.vault`) is the only artefact that travels
+  with the repository; an attacker who reads the repo without the
+  master password sees only the KDF salt, nonces, and ciphertext.
+
+## What this does NOT do
+
+- It does not protect against a leak of `ENVVAULT_PASSWORD` itself.
+  Rotate the password (and the secret in GitHub) immediately if you
+  suspect it was exposed.
+- It does not protect against a malicious dependency in the
+  `npm install` step that exfiltrates the env once `envault run`
+  has decrypted it. Pin your dependencies, use `npm ci`, and run
+  `cve-watch` (https://github.com/wardsvelds2l/cve-watch) in CI.
+- It does not protect the build host. If the runner is compromised,
+  the master password is in process memory for the duration of the
+  step.

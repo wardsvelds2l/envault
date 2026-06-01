@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import { Writable } from 'node:stream';
 import { createInterface } from 'node:readline';
 
 export interface PasswordOptions {
@@ -64,15 +65,32 @@ function readFromStdin(): Promise<string> {
 
 function promptPassword(): Promise<string> {
   return new Promise((resolve, reject) => {
+    const mutedOutput = new Writable({
+      write(_chunk, _encoding, callback) {
+        callback();
+      },
+    });
     const rl = createInterface({
       input: process.stdin,
-      output: process.stderr,
+      output: mutedOutput,
       terminal: true,
     });
-    rl.question('Master password: ', (answer) => {
+    const onSigint = (): void => {
       rl.close();
+      process.exit(130);
+    };
+    process.once('SIGINT', onSigint);
+    process.stderr.write('Master password: ');
+    rl.question('', (answer) => {
+      process.removeListener('SIGINT', onSigint);
+      rl.close();
+      process.stderr.write('\n');
       resolve(answer);
     });
-    rl.on('error', (err) => reject(err));
+    rl.on('error', (err) => {
+      process.removeListener('SIGINT', onSigint);
+      rl.close();
+      reject(err);
+    });
   });
 }
