@@ -4,7 +4,8 @@ import * as path from 'node:path';
 import * as os from 'node:os';
 import { addCommand } from '../../src/commands/add.js';
 import { getCommand } from '../../src/commands/get.js';
-import { TEST_PASSWORD } from '../helpers.js';
+import { createVault, writeVault } from '../../src/vault.js';
+import { TEST_KDF, TEST_PASSWORD } from '../helpers.js';
 import type { GlobalOptions } from '../../src/types.js';
 
 describe('get command', () => {
@@ -25,6 +26,9 @@ describe('get command', () => {
       stdout.push(typeof chunk === 'string' ? chunk : chunk.toString());
       return true;
     }) as typeof process.stdout.write;
+    // Pre-create vault with fast test KDF so addCommand doesn't use
+    // production-grade Argon2id params (which timeout in CI coverage runs).
+    writeVault(vaultPath, createVault(TEST_KDF));
     await addCommand('FOO=bar', {}, opts());
     await addCommand('EMPTY=', {}, opts());
     await addCommand('WITH_NEWLINE=line1\nline2', {}, opts());
