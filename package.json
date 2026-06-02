@@ -1,6 +1,6 @@
 {
   "name": "envault",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Encrypt .env files with XChaCha20-Poly1305 + Argon2id so they can be safely committed to git",
   "type": "module",
   "main": "dist/cli.js",
