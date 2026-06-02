@@ -151,6 +151,8 @@ The full line-by-line construction is in [`examples/threat-model.md` § 5](./exa
 
 ## Installation
 
+### From npm (recommended)
+
 ```bash
 npm install -g envault
 ```
@@ -161,9 +163,22 @@ Or run it without installing:
 npx envault@^0.2.0 init
 ```
 
-Or grab the prebuilt single-file bundle from the [releases page](https://github.com/wardsvelds2l/envault/releases) — `dist/envault.js` is one self-contained file, no `node_modules` needed at runtime.
-
 Requires Node.js 20.0 or newer (we test 20 and 22 in CI on Ubuntu, macOS, and Windows).
+
+### From source (local development)
+
+```bash
+git clone https://github.com/wardsvelds2l/envault.git
+cd envault
+npm install
+npm run bundle        # builds dist/envault.js
+npm link              # makes `envault` available globally
+envault --help
+```
+
+`dist/envault.js` is one self-contained file — no `node_modules` needed at runtime. You can also grab a prebuilt bundle from the [releases page](https://github.com/wardsvelds2l/envault/releases).
+
+After `npm link`, all `envault` commands used throughout this README work as written. To unlink later, run `npm unlink -g envault`.
 
 ## Quick start
 
